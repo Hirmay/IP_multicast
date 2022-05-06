@@ -73,6 +73,5 @@ int main(int argc, char *argv[])
         int n;
 
         close(s);
-        break;
     }
 }
