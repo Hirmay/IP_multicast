@@ -54,54 +54,55 @@ def newConnections(socket):
         total_connections += 1
 
 
-class Station1(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
+# class Station1(threading.Thread):
+#     def __init__(self):
+#         threading.Thread.__init__(self)
 
-    def run(self):
-        BUFF_SIZE = 65536
-        server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
+def station1():
+    BUFF_SIZE = 65536
+    server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+    server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
 
-        server_socket.bind(("localhost", 5445))
-        while(True):
-            CHUNK = 10*1024
-            wf = wave.open("temp.wav.wav")
-            p = pyaudio.PyAudio()
-            print('server listening at',("localhost", 5445),wf.getframerate())
-            stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                            channels=wf.getnchannels(),
-                            rate=wf.getframerate(),
-                            input=True,
-                            frames_per_buffer=CHUNK)
+    server_socket.bind(("localhost", 5445))
+    while(True):
+        print("Hello")
+        CHUNK = 1024
+        wf = wave.open("./../songs/2o6MB.wav")
+        p = pyaudio.PyAudio()
+        print('server listening at',("localhost", 5445),wf.getframerate())
+        stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                        channels=wf.getnchannels(),
+                        rate=wf.getframerate(),
+                        input=True,
+                        frames_per_buffer=CHUNK)
 
-            data = None
-            sample_rate = wf.getframerate()
+        data = None
+        sample_rate = wf.getframerate()
+        while True:
+            # msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
+            # print('[GOT connection from]... ',("localhost", 5445),msg)
+            DATA_SIZE = math.ceil(wf.getnframes()/CHUNK)
+            DATA_SIZE = str(DATA_SIZE).encode()
+            print('[Sending data size]...',wf.getnframes()/sample_rate)
+            server_socket.sendto(DATA_SIZE,("localhost", 5445))
+            cnt=0
             while True:
-                msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
-                print('[GOT connection from]... ',client_addr,msg)
-                DATA_SIZE = math.ceil(wf.getnframes()/CHUNK)
-                DATA_SIZE = str(DATA_SIZE).encode()
-                print('[Sending data size]...',wf.getnframes()/sample_rate)
-                server_socket.sendto(DATA_SIZE,client_addr)
-                cnt=0
-                while True:
-                    
-                    data = wf.readframes(CHUNK)
-                    server_socket.sendto(data,client_addr)
-                    time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
-                    print(cnt)
-                    if cnt >(wf.getnframes()/CHUNK):
-                        break
-                    cnt+=1
+                
+                data = wf.readframes(CHUNK)
+                server_socket.sendto(data,("localhost", 5445))
+                time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
+                # print(cnt)
+                if cnt >(wf.getnframes()/CHUNK):
+                    break
+                cnt+=1
 
-                break
-            print('SENT...')            
+            break
+        print('SENT...')            
 
 def main():
     #Get host and port
     host = "localhost"
-    port = 5432
+    port = 5431
 
     #Create new server socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -112,7 +113,7 @@ def main():
     newConnectionsThread = threading.Thread(target = newConnections, args = (sock,))
     newConnectionsThread.start()
 
-    station1Thread = threading.Thread(target=Station1)
+    station1Thread = threading.Thread(target=station1)
     station1Thread.start()
     
     
