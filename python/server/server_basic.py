@@ -92,7 +92,7 @@ def station1():
             
             data = wf.readframes(CHUNK)
             server_socket.sendto(data,("localhost", 5444))
-            # time.sleep(0.0001) # Here you can adjust it according to how fast you want to send data keep it > 0
+            time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
             # print(cnt)
             if cnt >(wf.getnframes()/CHUNK):
                 break
