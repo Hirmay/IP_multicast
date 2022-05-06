@@ -63,7 +63,7 @@ def station1():
     server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
     server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
 
-    server_socket.bind(("localhost", 5445))
+    # server_socket.bind(("localhost", 5445))
     while(True):
         print("Hello")
         CHUNK = 1024
@@ -78,31 +78,33 @@ def station1():
 
         data = None
         sample_rate = wf.getframerate()
+        
+        # msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
+        # print('[GOT connection from]... ',client_addr,msg)
+        # DATA_SIZE = math.ceil(wf.getnframes()/CHUNK)
+        # DATA_SIZE = str(DATA_SIZE).encode()
+        # print('[Sending data size]...',wf.getnframes()/sample_rate)
+        # server_socket.sendto(DATA_SIZE,client_addr)
+        # while True:
+        
+        cnt=0
         while True:
-            # msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
-            # print('[GOT connection from]... ',("localhost", 5445),msg)
-            DATA_SIZE = math.ceil(wf.getnframes()/CHUNK)
-            DATA_SIZE = str(DATA_SIZE).encode()
-            print('[Sending data size]...',wf.getnframes()/sample_rate)
-            server_socket.sendto(DATA_SIZE,("localhost", 5445))
-            cnt=0
-            while True:
-                
-                data = wf.readframes(CHUNK)
-                server_socket.sendto(data,("localhost", 5445))
-                time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
-                # print(cnt)
-                if cnt >(wf.getnframes()/CHUNK):
-                    break
-                cnt+=1
+            
+            data = wf.readframes(CHUNK)
+            server_socket.sendto(data,("localhost", 5445))
+            time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
+            # print(cnt)
+            if cnt >(wf.getnframes()/CHUNK):
+                break
+            cnt+=1
 
-            break
+            # break
         print('SENT...')            
 
 def main():
     #Get host and port
     host = "localhost"
-    port = 5431
+    port = 5432
 
     #Create new server socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
