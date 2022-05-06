@@ -1,5 +1,6 @@
 import socket
-import threading
+import threading, wave, pyaudio, time
+import math
 
 #Variables for holding information about connections
 connections = []
@@ -26,6 +27,7 @@ class Client(threading.Thread):
     #client aside from the client that has sent it
     #.decode is used to convert the byte data into a printable string
     def run(self):
+
         while self.signal:
             try:
                 data = self.socket.recv(32)
@@ -36,9 +38,10 @@ class Client(threading.Thread):
                 break
             if data != "":
                 print("ID " + str(self.id) + ": " + str(data.decode("utf-8")))
-                for client in connections:
-                    if client.id != self.id:
-                        client.socket.sendall(data)
+
+                # for client in connections:
+                #     if client.id != self.id:
+                #         client.socket.sendall(data)
 
 #Wait for new connections
 def newConnections(socket):
@@ -46,14 +49,59 @@ def newConnections(socket):
         sock, address = socket.accept()
         global total_connections
         connections.append(Client(sock, address, total_connections, "Name", True))
-        connections[len(connections) - 1].start()
-        print("New connection at ID " + str(connections[len(connections) - 1]))
+        connections[-1].start()
+        print("New connection at ID " + str(connections[-1]))
         total_connections += 1
+
+
+class Station1(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        BUFF_SIZE = 65536
+        server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
+
+        server_socket.bind(("localhost", 5445))
+        while(True):
+            CHUNK = 10*1024
+            wf = wave.open("temp.wav.wav")
+            p = pyaudio.PyAudio()
+            print('server listening at',("localhost", 5445),wf.getframerate())
+            stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                            channels=wf.getnchannels(),
+                            rate=wf.getframerate(),
+                            input=True,
+                            frames_per_buffer=CHUNK)
+
+            data = None
+            sample_rate = wf.getframerate()
+            while True:
+                msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
+                print('[GOT connection from]... ',client_addr,msg)
+                DATA_SIZE = math.ceil(wf.getnframes()/CHUNK)
+                DATA_SIZE = str(DATA_SIZE).encode()
+                print('[Sending data size]...',wf.getnframes()/sample_rate)
+                server_socket.sendto(DATA_SIZE,client_addr)
+                cnt=0
+                while True:
+                    
+                    data = wf.readframes(CHUNK)
+                    server_socket.sendto(data,client_addr)
+                    time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
+                    print(cnt)
+                    if cnt >(wf.getnframes()/CHUNK):
+                        break
+                    cnt+=1
+
+                break
+            print('SENT...')            
 
 def main():
     #Get host and port
-    host = input("Host: ")
-    port = int(input("Port: "))
+    host = "localhost"
+    port = 5432
 
     #Create new server socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -63,5 +111,9 @@ def main():
     #Create new thread to wait for connections
     newConnectionsThread = threading.Thread(target = newConnections, args = (sock,))
     newConnectionsThread.start()
+
+    station1Thread = threading.Thread(target=Station1)
+    station1Thread.start()
+    
     
 main()
