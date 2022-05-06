@@ -10,7 +10,7 @@ def receive(sock, signal):
             # data = socket.recv(32)
             # print(str(data.decode("utf-8")))
 
-        BUFF_SIZE = 65536
+        BUFF_SIZE = 1024
         client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         client_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
         p = pyaudio.PyAudio()
@@ -26,7 +26,7 @@ def receive(sock, signal):
        
         # message = b'Hello'
         # client_socket.sendto(message,("localhost",5445))
-        # DATA_SIZE,_= client_socket.recvfrom(BUFF_SIZE)
+        DATA_SIZE,_= client_socket.recvfrom(BUFF_SIZE)
         # print("Hello")
         # DATA_SIZE = int(DATA_SIZE.decode())
         # while True:
@@ -48,8 +48,8 @@ def receive(sock, signal):
         while True:
             frame = q.get()
             stream.write(frame)
-            print('[Queue size while playing]...',q.qsize(),'[Time remaining...]',round(DURATION),'seconds')
-            DURATION-=CHUNK/44100
+            # print('[Queue size while playing]...',q.qsize(),'[Time remaining...]',round(DURATION),'seconds')
+            # DURATION-=CHUNK/44100
             if(q.qsize()==0):
                 break
         client_socket.close()

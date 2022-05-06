@@ -59,7 +59,7 @@ def newConnections(socket):
 #         threading.Thread.__init__(self)
 
 def station1():
-    BUFF_SIZE = 65536
+    BUFF_SIZE = 1024
     server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
     server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
 
@@ -67,7 +67,7 @@ def station1():
     while(True):
         print("Hello")
         CHUNK = 1024
-        wf = wave.open("./../songs/2o6MB.wav")
+        wf = wave.open("./../songs/10MB.wav")
         p = pyaudio.PyAudio()
         print('server listening at',("localhost", 5445),wf.getframerate())
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
