@@ -1,6 +1,7 @@
 import socket
 import threading, wave, pyaudio, time
 import math
+import struct
 
 #Variables for holding information about connections
 connections = []
@@ -60,16 +61,19 @@ def newConnections(socket):
 
 def station1():
     BUFF_SIZE = 65536
-    server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
+    MCAST_GRP = '127.0.0.1'
+    MCAST_PORT = 5007
+    MULTICAST_TTL = 2
+    server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    server_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, MULTICAST_TTL)
+    server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF, BUFF_SIZE)
 
-    # server_socket.bind(("localhost", 5445))
     while(True):
         print("Hello")
         CHUNK = 1024*10
         wf = wave.open("./../songs/excuses.wav")
         p = pyaudio.PyAudio()
-        print('server listening at',("localhost", 5445),wf.getframerate())
+        # print('server listening at',("localhost", 5445),wf.getframerate())
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                         channels=wf.getnchannels(),
                         rate=wf.getframerate(),
@@ -91,7 +95,7 @@ def station1():
         while True:
             
             data = wf.readframes(CHUNK)
-            server_socket.sendto(data,("localhost", 5444))
+            server_socket.sendto(data,(MCAST_GRP, MCAST_PORT))
             time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
             # print(cnt)
             if cnt >(wf.getnframes()/CHUNK):

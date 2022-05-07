@@ -1,7 +1,7 @@
 import socket
 import threading, wave, pyaudio, time, queue
 import sys
-
+import struct
 #Wait for incoming data from server
 #.decode is used to turn the message in bytes to a string
 def receive(sock, signal):
@@ -11,12 +11,17 @@ def receive(sock, signal):
             # print(str(data.decode("utf-8")))
 
         BUFF_SIZE = 65536
-        client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        client_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,BUFF_SIZE)
+        client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         p = pyaudio.PyAudio()
         CHUNK = 1024*10
-        client_socket.bind(("localhost", 5444))
-
+        MCAST_GRP = '224.1.1.1'
+        MCAST_PORT = 5007
+        client_socket.bind(('', MCAST_PORT))
+        group = socket.inet_aton(MCAST_GRP)
+        mreq = struct.pack('4sl', group, socket.INADDR_ANY)
+        client_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+        client_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,1)
         stream = p.open(format=p.get_format_from_width(2),
                         channels=2,
                         rate=44100,
