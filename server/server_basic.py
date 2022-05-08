@@ -45,9 +45,9 @@ class Client(threading.Thread):
                 #     if client.id != self.id:
                 #         client.socket.sendall(data)
 # This will be a static message containing station information in an ordered list being sent to client.       
-multi_msg = [[0, 'Blinding Lights', 'This station will play blinding lights', '127.0.0.1', 5007, 'info_port-dont know', 44100],
-[1, 'Blinding Lights', 'This station will play blinding lights', '127.0.0.1', 5007, 'info_port-dont know', 44100],
-[2, 'Blinding Lights', 'This station will play blinding lights', '127.0.0.1', 5007, 'info_port-dont know', 44100]]
+multi_msg = [[0, 'Blinding Lights', 'This station will play blinding lights', '224.1.1.1', 5007, 'info_port-dont know', 44100],
+[1, 'Blinding Lights', 'This station will play blinding lights', '225.1.1.1', 5008, 'info_port-dont know', 44100],
+[2, 'Blinding Lights', 'This station will play blinding lights', '226.1.1.1', 5009, 'info_port-dont know', 44100]]
 # this will convert the list to a string which then will be sent to the client as a encoded message
 multi_str = str(multi_msg)
 #Wait for new connections
@@ -68,11 +68,11 @@ def newConnections(socket):
 #     def __init__(self):
 #         threading.Thread.__init__(self)
 
-def station1():
+def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
     BUFF_SIZE = 65536
-    MCAST_GRP = '127.0.0.1'
-    MCAST_PORT = 5007
     MULTICAST_TTL = 2
+    MCAST_GRP = M_CAST_GRP
+    MCAST_PORT = M_CAST_PORT
     server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     server_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, MULTICAST_TTL)
     server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF, BUFF_SIZE)
@@ -80,8 +80,7 @@ def station1():
     while(True):
         print("Hello")
         CHUNK = 1024*10
-        #song paths would be stored in some list and applied to different stations 
-        wf = wave.open("./../songs/excuses.wav")
+        wf = wave.open(song_path)
         p = pyaudio.PyAudio()
         # print('server listening at',("localhost", 5445),wf.getframerate())
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
@@ -128,9 +127,16 @@ def main():
     #Create new thread to wait for connections
     newConnectionsThread = threading.Thread(target = newConnections, args = (sock,))
     newConnectionsThread.start()
-
-    station1Thread = threading.Thread(target=station1)
+    song_paths = ["./../songs/lights.wav", "./../songs/excuses.wav", "./../songs/lights.wav"]
+    # essentially the server will have some different stations with same functionality 
+    # but different MCAST GRPS and different mcast ports
+    station1Thread = threading.Thread(target=station_n, args = (multi_msg[0][3], multi_msg[0][4], song_paths[0]))
     station1Thread.start()
+    #station2Thread = threading.Thread(target=station_n, args = (multi_msg[1][3], multi_msg[1][4], song_paths[1]))
+    #station2Thread.start()
+    #station3Thread = threading.Thread(target=station_n, args = (multi_msg[2][3], multi_msg[2][4], song_paths[2]))
+    #station3Thread.start()
+
     
     
 main()
