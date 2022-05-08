@@ -17,8 +17,8 @@ def receive(sock, signal, multi_list, stat_int):
         client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         p = pyaudio.PyAudio()
         CHUNK = 1024*10
-        MCAST_GRP = '224.1.1.1'
-        MCAST_PORT = 5007
+        MCAST_GRP = multi_station[3]
+        MCAST_PORT = multi_station[4]
         client_socket.bind(('', MCAST_PORT))
         group = socket.inet_aton(MCAST_GRP)
         mreq = struct.pack('4sl', group, socket.INADDR_ANY)
@@ -75,7 +75,7 @@ def receive(sock, signal, multi_list, stat_int):
 host = "localhost"
 port = 5432
 
-#Attempt connection to server
+#Attempt connection to server through tcp protocol
 try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, port))
@@ -104,6 +104,7 @@ m_port = 5007
 def input_client(client_socket):
     client_msg = "Type P, R, T or S at any point you want to Pause, Restart, Terminate, or Switch respectively: "
     message = input(client_msg)
+    # this will take mcast port as input as well as mcast grp
     client_socket.sendto(message.encode(),("localhost",5007))
         # do something with the message
 #Create new thread to wait for data
