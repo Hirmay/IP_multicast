@@ -60,8 +60,8 @@ def newConnections(socket):
         print("New connection at ID " + str(connections[-1]))
         total_connections += 1
         sock.send(multi_str.encode())
-        station = sock.recv(1024).decode()
-        print(station)
+        #station = sock.recv(1024).decode()
+        #print(station)
 
 
 # class Station1(threading.Thread):
@@ -130,10 +130,10 @@ def main():
     song_paths = ["./../songs/lights.wav", "./../songs/excuses.wav", "./../songs/lights.wav"]
     # essentially the server will have some different stations with same functionality 
     # but different MCAST GRPS and different mcast ports
-    station1Thread = threading.Thread(target=station_n, args = (multi_msg[0][3], multi_msg[0][4], song_paths[0]))
-    station1Thread.start()
-    #station2Thread = threading.Thread(target=station_n, args = (multi_msg[1][3], multi_msg[1][4], song_paths[1]))
-    #station2Thread.start()
+    #station1Thread = threading.Thread(target=station_n, args = (multi_msg[0][3], multi_msg[0][4], song_paths[0]))
+    #station1Thread.start()
+    station2Thread = threading.Thread(target=station_n, args = (multi_msg[1][3], multi_msg[1][4], song_paths[1]))
+    station2Thread.start()
     #station3Thread = threading.Thread(target=station_n, args = (multi_msg[2][3], multi_msg[2][4], song_paths[2]))
     #station3Thread.start()
 
