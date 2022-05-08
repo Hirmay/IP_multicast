@@ -24,7 +24,7 @@ def receive(sock, signal, multi_list, stat_int):
         mreq = struct.pack('4sl', group, socket.INADDR_ANY)
         client_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
         client_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF,1)
-        input_client()
+        input_client(client_socket=client_socket)
         stream = p.open(format=p.get_format_from_width(2),
                         channels=2,
                         rate=44100,
@@ -101,11 +101,10 @@ sock.send(station.encode())
 or switch the respective station
 It will be necessary to have a different thread which can do this for us   """
 m_port = 5007
-def input_client():
-    while True:
-        client_msg = "Type P, R, T or S at any point you want to Pause, Restart, Terminate, or Switch respectively: "
-        message = input(client_msg)
-        client_socket.sendto(message,("localhost",5007))
+def input_client(client_socket):
+    client_msg = "Type P, R, T or S at any point you want to Pause, Restart, Terminate, or Switch respectively: "
+    message = input(client_msg)
+    client_socket.sendto(message.encode(),("localhost",5007))
         # do something with the message
 #Create new thread to wait for data
 # other args will be given based on the selection
