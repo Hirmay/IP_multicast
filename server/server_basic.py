@@ -80,7 +80,8 @@ def station1():
     while(True):
         print("Hello")
         CHUNK = 1024*10
-        wf = wave.open("./../songs/lights.wav")
+        #song paths would be stored in some list and applied to different stations 
+        wf = wave.open("./../songs/excuses.wav")
         p = pyaudio.PyAudio()
         # print('server listening at',("localhost", 5445),wf.getframerate())
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
