@@ -38,15 +38,13 @@ class Client(threading.Thread):
                 self.signal = False
                 connections.remove(self)
                 break
-            if data != "":
-                print("ID " + str(self.id) + ": " + str(data.decode("utf-8")))
 
                 # for client in connections:
                 #     if client.id != self.id:
                 #         client.socket.sendall(data)
 # This will be a static message containing station information in an ordered list being sent to client.       
-multi_msg = [[0, 'Blinding Lights', 'This station will play blinding lights', '224.1.1.1', 5007, 'info_port-dont know', 44100],
-[1, 'Blinding Lights', 'This station will play blinding lights', '225.1.1.1', 5008, 'info_port-dont know', 44100],
+multi_msg = [[0, 'Guitar Music', 'This station will play guitar music', '224.1.1.1', 5007, 'info_port-dont know', 44100],
+[1, 'Excuses', 'This station will play excuses', '225.1.1.1', 5008, 'info_port-dont know', 44100],
 [2, 'Blinding Lights', 'This station will play blinding lights', '226.1.1.1', 5009, 'info_port-dont know', 44100]]
 # this will convert the list to a string which then will be sent to the client as a encoded message
 multi_str = str(multi_msg)
@@ -78,7 +76,6 @@ def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
     server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF, BUFF_SIZE)
 
     while(True):
-        print("Hello")
         CHUNK = 1024*10
         wf = wave.open(song_path)
         p = pyaudio.PyAudio()
@@ -127,7 +124,7 @@ def main():
     #Create new thread to wait for connections
     newConnectionsThread = threading.Thread(target = newConnections, args = (sock,))
     newConnectionsThread.start()
-    song_paths = ["./../songs/lights.wav", "./../songs/excuses.wav", "./../songs/eyes.wav"]
+    song_paths = ["./../songs/1.wav", "./../songs/2.wav", "./../songs/3.wav"]
     # essentially the server will have some different stations with same functionality 
     # but different MCAST GRPS and different mcast ports
     station1Thread = threading.Thread(target=station_n, args = (multi_msg[0][3], multi_msg[0][4], song_paths[0]))
