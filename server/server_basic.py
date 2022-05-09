@@ -25,7 +25,6 @@ class Client(threading.Thread):
     #client aside from the client that has sent it
     #.decode is used to convert the byte data into a printable string
     def run(self):
-
         while self.signal:
             try:
                 data = self.socket.recv(32)
@@ -35,9 +34,7 @@ class Client(threading.Thread):
                 connections.remove(self)
                 break
 
-                # for client in connections:
-                #     if client.id != self.id:
-                #         client.socket.sendall(data)
+
 # This will be a static message containing station information in an ordered list being sent to client.       
 multi_msg = [[0, 'Guitar Music', 'This station will play guitar music', '224.1.1.1', 5007, 'info_port-dont know', 44100],
 [1, 'Excuses', 'This station will play excuses', '225.1.1.1', 5008, 'info_port-dont know', 44100],
@@ -55,42 +52,27 @@ def newConnections(socket):
         total_connections += 1
         sock.send(multi_str.encode())
 
-
-
-# class Station1(threading.Thread):
-#     def __init__(self):
-#         threading.Thread.__init__(self)
-
 def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
     BUFF_SIZE = 65536
     MULTICAST_TTL = 2
     MCAST_GRP = M_CAST_GRP
     MCAST_PORT = M_CAST_PORT
+    # Creating a server socket to send data through UDP protocol
     server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    # Setting socket options for the server
     server_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, MULTICAST_TTL)
     server_socket.setsockopt(socket.SOL_SOCKET,socket.SO_RCVBUF, BUFF_SIZE)
 
     while(True):
         CHUNK = 1024*10
         wf = wave.open(song_path)
-        p = pyaudio.PyAudio()
-        data = None
-        
-        # msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
-        # print('[GOT connection from]... ',client_addr,msg)
-        # DATA_SIZE = math.ceil(wf.getnframes()/CHUNK)
-        # DATA_SIZE = str(DATA_SIZE).encode()
-        # print('[Sending data size]...',wf.getnframes()/sample_rate)
-        # server_socket.sendto(DATA_SIZE,client_addr)
-        # while True:
-        
+        data = None        
         cnt=0
         while True:
-            
-            data = wf.readframes(CHUNK)
+            data = wf.readframes(CHUNK) # Reading CHUNK sizes of data and sending them to the multicast address
             server_socket.sendto(data,(MCAST_GRP, MCAST_PORT))
             time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
-            if cnt >(wf.getnframes()/CHUNK):
+            if cnt >(wf.getnframes()/CHUNK): 
                 break
             cnt+=1
         wf.close()           
