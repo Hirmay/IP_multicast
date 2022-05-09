@@ -127,15 +127,17 @@ def main():
     #Create new thread to wait for connections
     newConnectionsThread = threading.Thread(target = newConnections, args = (sock,))
     newConnectionsThread.start()
-    song_paths = ["./../songs/lights.wav", "./../songs/excuses.wav", "./../songs/lights.wav"]
+    song_paths = ["./../songs/lights.wav", "./../songs/excuses.wav", "./../songs/eyes.wav"]
     # essentially the server will have some different stations with same functionality 
     # but different MCAST GRPS and different mcast ports
-    #station1Thread = threading.Thread(target=station_n, args = (multi_msg[0][3], multi_msg[0][4], song_paths[0]))
-    #station1Thread.start()
+    station1Thread = threading.Thread(target=station_n, args = (multi_msg[0][3], multi_msg[0][4], song_paths[0]))
+    station1Thread.start()
+    time.sleep(1)
     station2Thread = threading.Thread(target=station_n, args = (multi_msg[1][3], multi_msg[1][4], song_paths[1]))
     station2Thread.start()
-    #station3Thread = threading.Thread(target=station_n, args = (multi_msg[2][3], multi_msg[2][4], song_paths[2]))
-    #station3Thread.start()
+    time.sleep(1)
+    station3Thread = threading.Thread(target=station_n, args = (multi_msg[2][3], multi_msg[2][4], song_paths[2]))
+    station3Thread.start()
 
     
     
