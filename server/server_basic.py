@@ -1,8 +1,4 @@
-import socket
-import threading, wave, pyaudio, time
-import math
-import struct
-import numpy as np
+import socket, threading, wave, pyaudio, time
 
 #Variables for holding information about connections
 connections = []
@@ -45,7 +41,7 @@ class Client(threading.Thread):
 # This will be a static message containing station information in an ordered list being sent to client.       
 multi_msg = [[0, 'Guitar Music', 'This station will play guitar music', '224.1.1.1', 5007, 'info_port-dont know', 44100],
 [1, 'Excuses', 'This station will play excuses', '225.1.1.1', 5008, 'info_port-dont know', 44100],
-[2, 'Blinding Lights', 'This station will play blinding lights', '226.1.1.1', 5009, 'info_port-dont know', 44100]]
+[2, 'General Music', 'This station will play general music', '226.1.1.1', 5009, 'info_port-dont know', 44100]]
 # this will convert the list to a string which then will be sent to the client as a encoded message
 multi_str = str(multi_msg)
 #Wait for new connections
@@ -58,8 +54,7 @@ def newConnections(socket):
         print("New connection at ID " + str(connections[-1]))
         total_connections += 1
         sock.send(multi_str.encode())
-        #station = sock.recv(1024).decode()
-        #print(station)
+
 
 
 # class Station1(threading.Thread):
@@ -79,15 +74,7 @@ def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
         CHUNK = 1024*10
         wf = wave.open(song_path)
         p = pyaudio.PyAudio()
-        # print('server listening at',("localhost", 5445),wf.getframerate())
-        stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                        channels=wf.getnchannels(),
-                        rate=wf.getframerate(),
-                        input=True,
-                        frames_per_buffer=CHUNK)
-
         data = None
-        sample_rate = wf.getframerate()
         
         # msg,client_addr = server_socket.recvfrom(BUFF_SIZE)
         # print('[GOT connection from]... ',client_addr,msg)
@@ -103,20 +90,16 @@ def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
             data = wf.readframes(CHUNK)
             server_socket.sendto(data,(MCAST_GRP, MCAST_PORT))
             time.sleep(0.001) # Here you can adjust it according to how fast you want to send data keep it > 0
-            # print(cnt)
             if cnt >(wf.getnframes()/CHUNK):
                 break
             cnt+=1
-
-            # break
-        print('SENT...')            
+        wf.close()           
 
 def main():
-    #Get host and port
     host = "localhost"
     port = 5432
 
-    #Create new server socket
+    #Creating a new TCP server socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((host, port))
     sock.listen(5)
@@ -124,9 +107,13 @@ def main():
     #Create new thread to wait for connections
     newConnectionsThread = threading.Thread(target = newConnections, args = (sock,))
     newConnectionsThread.start()
+
+    # songs for each station
     song_paths = ["./../songs/1.wav", "./../songs/2.wav", "./../songs/3.wav"]
-    # essentially the server will have some different stations with same functionality 
-    # but different MCAST GRPS and different mcast ports
+    # The server has 3 base stations having different functionality
+    # However, they will have MCAST GRPS and different mcast ports
+
+    #start three threads - 1 for each station
     station1Thread = threading.Thread(target=station_n, args = (multi_msg[0][3], multi_msg[0][4], song_paths[0]))
     station1Thread.start()
     time.sleep(1)
@@ -135,7 +122,13 @@ def main():
     time.sleep(1)
     station3Thread = threading.Thread(target=station_n, args = (multi_msg[2][3], multi_msg[2][4], song_paths[2]))
     station3Thread.start()
+    time.sleep(1)
 
-    
-    
+    # Wait for all threads to join   
+    station1Thread.join()
+    station2Thread.join()
+    station3Thread.join()
+    newConnectionsThread.join()
+    # Close the TCP socket
+    sock.close()
 main()
