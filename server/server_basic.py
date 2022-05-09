@@ -1,8 +1,10 @@
 import socket
 import threading
 import wave
-import pyaudio
 import time
+
+host = "localhost"
+port = 5432
 
 # Variables for holding information about connections
 connections = []
@@ -47,8 +49,6 @@ multi_msg = [[0, 'Guitar Music', 'This station will play guitar music', '224.1.1
              [2, 'General Music', 'This station will play general music', '226.1.1.1', 5009, 'info_port-dont know', 44100]]
 # this will convert the list to a string which then will be sent to the client as a encoded message
 multi_str = str(multi_msg)
-# Wait for new connections
-
 
 def newConnections(socket):
     while True:  # infinite loop to accept clients
@@ -61,7 +61,6 @@ def newConnections(socket):
         total_connections += 1
         # sending the client information regarding the stations and the songs being played on them as soon as it connects
         sock.send(multi_str.encode())
-
 
 def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
     BUFF_SIZE = 65536
@@ -77,7 +76,7 @@ def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, BUFF_SIZE)
 
     while(True):
-        CHUNK = 1024*10
+        CHUNK = 10240
         wf = wave.open(song_path)
         data = None
         cnt = 0
@@ -95,9 +94,6 @@ def station_n(M_CAST_GRP, M_CAST_PORT, song_path):
 
 
 def main():
-    host = "localhost"
-    port = 5432
-
     # Creating a new TCP server socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((host, port))

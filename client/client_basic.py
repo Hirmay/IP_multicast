@@ -22,7 +22,7 @@ def receive(signal, multi_list, stat_int, client_socket):
             BUFF_SIZE = 65536
             client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             p = pyaudio.PyAudio()
-            CHUNK = 1024*10
+            CHUNK = 10240
             # multicast address of the station to be played
             MCAST_GRP = multi_station[3]
             # multicast port of the station to be playeed
