@@ -19,23 +19,8 @@
 |Nipun Patel|AU1940033|
 Table of Contents
 
-[**Background](#_page1_x72.00_y437.08) **[2**](#_page1_x72.00_y437.08)**
 
-[**Design Decisions which were taken by the team](#_page1_x72.00_y517.26) **[2** ](#_page1_x72.00_y517.26)[Usage of threads wherever necessary](#_page1_x72.00_y569.71)** [2 ](#_page1_x72.00_y569.71)[Storage Structure](#_page2_x72.00_y119.61) [3 ](#_page2_x72.00_y119.61)[GUI based-decisions](#_page2_x72.00_y228.24) [3](#_page2_x72.00_y228.24)
 
-[**Features/Functions of Server](#_page2_x72.00_y429.64) **[3** ](#_page2_x72.00_y429.64)[Details of the method used to determine data rate](#_page2_x72.00_y482.08)** [3](#_page2_x72.00_y482.08)
-
-[**Features/Functions of Client](#_page3_x72.00_y72.00) **[4**](#_page3_x72.00_y72.00)**
-
-[Playback buffer size on the client-side](#_page3_x72.00_y169.34)
-
-[We experienced no buffer while streaming the audio. The buffer size used was 64 KB (confirm). When we used a smaller buffer size (1KB), we experienced a lot of disturbance and garbled audio.](#_page3_x72.00_y169.34) [4](#_page3_x72.00_y169.34)
-
-[Pause, Restart, Change, Terminate logic](#_page3_x72.00_y191.21) [4](#_page3_x72.00_y191.21)
-
-[**Part-2 Extra Credit Client interface, GUI based](#_page3_x72.00_y452.53) **[4** ](#_page3_x72.00_y452.53)[Brief description of the GUI](#_page3_x72.00_y504.98)** [4 ](#_page3_x72.00_y504.98)[Screenshots](#_page4_x72.00_y93.16) [5](#_page4_x72.00_y93.16)
-
-[**Contribution of team members](#_page4_x72.00_y603.76) **[5** ](#_page4_x72.00_y603.76)[References](#_page6_x72.00_y72.00) [7**](#_page6_x72.00_y72.00)**
 
 Background
 
