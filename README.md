@@ -1,5 +1,3 @@
-![](Aspose.Words.7e13c338-0811-4899-b2c4-364afea019ba.001.png)
-
 **LAB-4**
 
 **Topic: Multicasting multimedia over IP**
