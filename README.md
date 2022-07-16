@@ -90,10 +90,8 @@ Contribution of team members
 
 |**Team member name**|**Contribution and tasks are given**|
 | - | - |
-|Hirmay|- Refactoring and documenting of|
 
-
-||● ● ●|<p>server code</p><p>Server functionalities and the description mentioned in the report Attempt towards GUI layout and design (option-1)</p><p>Station design structure (MCast grp, port, content selection)</p>|
+|Hirmay|● ● ●|<p>server code</p><p>Server functionalities and the description mentioned in the report Attempt towards GUI layout and design (option-1)</p><p>Station design structure (MCast grp, port, content selection)</p>|
 | :- | - | - |
 |Rohan|● ● ● ●|<p>Refactoring and documenting of server code</p><p>Server functionalities and the description mentioned in the report Attempt towards GUI layout and design (option-1)</p><p>Station design structure (MCast grp, port, content selection)</p>|
 |Tirth|<p>● ● ●</p><p>●</p>|<p>Refactoring and documenting of server code</p><p>Server functionalities and the description mentioned in the report Attempt towards GUI layout and design (option-1)</p><p>Station design structure (MCast grp, port, content selection)</p>|
